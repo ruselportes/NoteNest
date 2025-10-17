@@ -1,84 +1,78 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  Alert,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import styles from './styles'; // ✅ Using same style file as Registration
 
-const Login: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+const LoginScreen: React.FC = () => {
+    const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
+  const handleLogin = () => {
     if (!email || !password) {
-      setError("Please fill in all fields.");
+      Alert.alert('Error', 'Please enter both email and password.');
       return;
     }
-
-    // Example: handle login logic here (e.g., API call)
-    console.log("Logging in with:", { email, password });
+    Alert.alert('Success', `Welcome back, ${email}!`);
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <Card className="w-full max-w-md p-6 shadow-lg rounded-2xl">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl font-bold text-gray-800">
-            Login
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Welcome Back</Text>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <Input
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+      {/* Email Field */}
+      <TextInput
+        style={styles.input}
+        placeholder="Email Address"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        placeholderTextColor="#aaa"
+      />
 
-            {error && (
-              <p className="text-sm text-red-500 text-center">{error}</p>
-            )}
+      {/* Password Field with Eye Icon */}
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="Password"
+          secureTextEntry={!showPassword}
+          value={password}
+          onChangeText={setPassword}
+          placeholderTextColor="#aaa"
+        />
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <Ionicons
+            name={showPassword ? 'eye-off' : 'eye'}
+            size={22}
+            color="#888"
+          />
+        </TouchableOpacity>
+      </View>
 
-            <Button
-              type="submit"
-              className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              Sign In
-            </Button>
-          </form>
+      {/* Login Button */}
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Log In</Text>
+      </TouchableOpacity>
 
-          <p className="text-sm text-center text-gray-600 mt-4">
-            Don’t have an account?{" "}
-            <a href="/register" className="text-blue-600 hover:underline">
-              Sign up
-            </a>
-          </p>
-        </CardContent>
-      </Card>
-    </div>
+      {/* Navigation Link */}
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Don't have an account?</Text>
+        <TouchableOpacity onPress={()=>navigation.navigate("Register" as never)}>
+          <Text style={styles.footerLink}> Sign Up</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
-export default Login;
+export default LoginScreen;
